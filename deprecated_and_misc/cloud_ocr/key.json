@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "personal-shelf-inspector",
+  "private_key_id": "71736ba89b3e941dd78f119d62effa06bf6b970e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCtkSbHmVV5z2VP\nyHJQbysMmrXn+BP5Dc4VmHxtDEpowjMZ2QoxqhweLJ7Mng4AvDoki+nPfxuQRLZe\n01cO0t7piwDiIKjLrdz8WIYG76WhjD2zAQvlJOLsNuq99m+Gy/SMtT7YmF1s2ZPP\nxbj+BcAv1/sN/LS8tOezu3s5/wJ9HZkfyRQ2f5wCQ3KuHP4rvfU5ydhbOWc444DT\nB2wynBhKn7PO4dy9v71EeRMOHfwYuXKcItcXaPxY+y4lJimGH3gOX0wH5d+hyoDZ\nrvcWc2lvuC4cyj5Cdsrfyzc8QNi53qPnbv05rujEkOoLrN4qokuGYu0OCaaD4IaZ\n0mwRS2JJAgMBAAECggEAI+klzGNRt4+tBvpSiIjPr95sp4+A1mVAT+CKUeeal50i\nhIUO4mKvSaDyxCQpgoZvQzN9jzRdyBYnY2w3lXYUr95WMvMN6YJR+BX6uQGpU8jX\n1SrwwprEppngLKiJv6qAMQKo+5hesBA+UF043rni3yNBKs4vuOF3FQ1DvCaiZa87\nVTh267cq51weclRLNUCfCrtnR4Qf3A4b+TWkWSz4CtiUiktFsAG1Iv7+dBR11sIx\n7IKdlNKTe8r3uCLVsHc6hux+SbDNqe4Ory0ehWohQsc1VpO6gT10eYOss9QUzYxk\n+Z31cnQEVqq4QU30Y3K1QHcT03OIhe/wRp47jExpFwKBgQD0wSJu2DxyoyY5QLMT\nAXaITB7DVOLXDKhPZAc5Dmg5ZIG/RkV4MbMZrvh3/2x71q5wgRjszV5WPhQGbhb0\nu2I7Qfmzv+WfT4z5aLnmNVKevjqw+vA4voUUrNFT3V/L5qeOU4K9lHzEUK8jjgBu\nOtUaKR+R0owhEKn6i4RRVLWU/wKBgQC1irEaSYCc6kRWXvwt6eSQyKfTPWJFXijI\n6MXjeOj65EFKcsVEjNDkLV5eQ2ECO0O4NNZQqnUf94hcE3v09pkyOQ8TCxpFMn/S\nurIkltfFYWJMvPAoEOHeF7YAfhnRrB70nRJDBFm6TDu9JR04o8fHrn8YigOMk+UH\nnQRY+SIgtwKBgQC+xVMbZrwm9neypHVv2PIU5pAL3Dw7Nohx6RugI1Sld2uSNSms\nt8BLwo+0qIhcNkcdNeLBoIlpW1WsdV67PtsgKRqCOo62EAFn3XMYtnNBfDCvBcj7\n0bRVGybF4YTrn0r2qqz7K6PcOK9qXSKEyKKVk3wh4ySKGT0EJn7qDcbC7QKBgQCU\nSBZkXEka4hazXZ4penPg9qRt3COaeVBi2g5YwHe8Bhh2UMxkM4ij95Ku9+YSxomH\nulCbTr+gPrU4UAndilaTORvg+B6bCqZxX2EGldbkN6js+R5H+5Ihr8hPGrDIHAik\n0G8MIk+P5Zid4+S8ULprlVHmn0RK3Lojv9K/Qa7ofQKBgBOA9uKOQmIhIdffA9YW\nuyNHTd88qiXEi1XaaJDXAtHyFcy8VwXjYILW+Su76nJmjdoIvvAQCSJNzkdnMq77\nBOD+TvAG1unSRZZRdqu3IkOUZDwP7OVDtboNB8/qmaUZAT/YgTkCh/X7RgCr6tQ/\nUFGR0wkw1tuHJOcmT4C6VacZ\n-----END PRIVATE KEY-----\n",
+  "client_email": "demovision@personal-shelf-inspector.iam.gserviceaccount.com",
+  "client_id": "108664755702001991795",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/demovision%40personal-shelf-inspector.iam.gserviceaccount.com"
+}

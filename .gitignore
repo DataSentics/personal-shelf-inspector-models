@@ -127,3 +127,21 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Cache
+.vscode
+__pycache__/
+*.ipynb_checkpoints
+*.cache
+
+# Models
+*.pb 
+*.pt 
+*.bin
+*.tflite
+
+# Trining logging 
+*events.out.tfevents.*
+wandb/
+*variables.data*
+*variables.index
