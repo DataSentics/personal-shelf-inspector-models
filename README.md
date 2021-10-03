@@ -7,7 +7,7 @@ This works locally and in AML as well.
 `pip3 install -r requirements.txt`
 
 
-2. Data for training names and prices are already prepared, here is the full repo including gitignored files https://tkml9458801219.file.core.windows.net/code-391ff5ac-6576-460f-ba4d-7e03433c68b6/Users/karolina.chalupova/personal-shelf-inspector-training/ 
+2. Data for training names and prices are already prepared, [here](https://tkml9458801219.file.core.windows.net/code-391ff5ac-6576-460f-ba4d-7e03433c68b6/Users/karolina.chalupova/personal-shelf-inspector-training/) is the full repo including gitignored files  
 You do not have to run `make prepare-data` as the data are already prepared for training names and prices. 
 
 3. Configure training in `Makefile` (see `SETTINGS` and `TRAINING` sections in `Makefile`, also described in README below)
@@ -21,14 +21,14 @@ make detect
 ```
 
 ### About 
-This Repo serves to train detection models for the Personal Shelf Inspector project. The models are then converted to TF.js using psi-torch-tf-conversion and psi-tf-js-conversion (those will soon be available in containers).
+This Repo serves to train detection models for the Personal Shelf Inspector project. The models are then converted to TF.js using [psi-torch-tf-converter](https://github.com/DataSentics/psi-torch-tf-converter) and [psi-tf-js-converter](https://github.com/DataSentics/psi-tf-js-converter) (those will soon be available in containers).
 
-The model architecture ised in this repository is based on ultralytics/yolov5 https://github.com/ultralytics/yolov5, 
+The model architecture ised in this repository is based on [ultralytics/yolov5](https://github.com/ultralytics/yolov5), 
 Note that the repositories is a fixed part of this repository (not a repo within repo), specifically a fork of commit xyz FILL IN!!!!!!!!!!!!! with a few bugfixes. Forking this specific commit was necessary for compatibility with psi-torch-tf-conversion.
 
 ### Personal Shelf Training Data 
 - The training data (jpgs) and trained models are ignored by git, so are not in this remote.
-- You can find the entire repo (including the .gitignore-d training images and models) in AML under `Users/karolina.chalupova/personal-shelf-inspector-training` (download here https://tkml9458801219.file.core.windows.net/code-391ff5ac-6576-460f-ba4d-7e03433c68b6/Users/karolina.chalupova/personal-shelf-inspector-training/)
+- You can find the entire repo (including the .gitignore-d training images and models) in AML under `Users/karolina.chalupova/personal-shelf-inspector-training` (download [here](https://tkml9458801219.file.core.windows.net/code-391ff5ac-6576-460f-ba4d-7e03433c68b6/Users/karolina.chalupova/personal-shelf-inspector-training/))
 - The training data including annotations are also here in Blob Storage `tkml9458801219/Blob Containers/personal-shelf-inspector/`
     - folder `detection_names_and_prices/data/raw` there includes exactly what you need in corresponding folder in this repo (new annotations with decimal values of prices annotated separately)
     - folder `detection_shelves/data/raw` has new annotations of shelves (complete coverage of different shops), but these are now likely redundant considering we do not have to train shelf detection model.
@@ -56,7 +56,7 @@ Change `SETTINGS` in the `Makefile` to set up which model and data you want to t
 
 ### Model training
 Once data preparation is complete just run `make train` command. You can modify and add the training parameters in the `Makefile`.
-This will also automatically guide you to optionally setup wandb (https://wandb.ai/) to monitor and analze ongoing training.
+This will also automatically guide you to optionally setup [Weights and Biases](https://wandb.ai/) to monitor and analze ongoing training.
 
 ### Inference 
 1. Put testing images to `{detection_shelves, detection_names_and_prices, detection_pricetags}/manual_test_images` folder. 
@@ -65,5 +65,5 @@ Actual inference will be done in javascript.
 
 ### Conversion to TF.js
 
-Apply psi-torch-tf-conversion and psi-tf-js-conversion to the saved torch model.
+Apply [psi-torch-tf-converter](https://github.com/DataSentics/psi-torch-tf-converter) and [psi-tf-js-converter](https://github.com/DataSentics/psi-tf-js-converter) to the saved torch model.
 See the corresponding repositories for more detail
