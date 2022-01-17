@@ -181,6 +181,7 @@ def convert_dataset(src_img_dir, src_label_dir, out_img_dir, out_label_dir, grid
 
     src_data = list(zip(src_img_files, src_label_files)) * n_iterations
 
+    random.seed(0)
     random.shuffle(src_data)
 
     # create collages of grid_size x grid_size images
