@@ -1,0 +1,8 @@
+name: psi-yolo
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # ----PYTHON-------
+  - python==3.8
+  - pip
