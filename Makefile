@@ -81,4 +81,24 @@ detect-pricetags:
 		--project ./detection_pricetags/runs/detect \
 		--name $(TRIAL_NAME)_pricetags${EXP_NAME} \
         --conf 0.25 \
-        --device cpu
+		--device cpu
+
+
+export-names-and-prices:
+	python ./yolov5/export.py \
+		--weights ./detection_names_and_prices/runs/train/$(TRIAL_NAME)_names_and_prices${EXP_NAME}/weights/best.pt \
+		--include tfjs
+
+export-pricetags:
+	python ./yolov5/export.py \
+		--weights ./detection_pricetags/runs/train/$(TRIAL_NAME)_pricetags${EXP_NAME}/weights/best.pt \
+		--include tfjs
+
+
+run-example-tfjs-webapp:
+	git clone https://github.com/zldrobit/tfjs-yolov5-example.git ; \
+	cd tfjs-yolov5-example \
+		&& npm install \
+		&& ln -f -s ../../detection_names_and_prices/runs/train/$(TRIAL_NAME)_names_and_prices${EXP_NAME}/weights/best_web_model public/web_model \
+		&& npm start
+
