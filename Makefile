@@ -55,8 +55,8 @@ train-names-and-prices:
 train-pricetags:
 	python ./yolov5/train.py \
         --img 640 \
-        --batch 16 \
-        --epochs 100 \
+        --batch 48 \
+        --epochs 300 \
         --data detection_pricetags/data/settings.yaml \
         --weights ./yolov5/yolov5n.pt \
         --project detection_pricetags/runs/train \
@@ -68,6 +68,8 @@ detect-names-and-prices:
 	python ./yolov5/detect.py \
         --source ./detection_names_and_prices/manual_test_images \
         --weights ./detection_names_and_prices/runs/train/$(TRIAL_NAME)_names_and_prices${EXP_NAME}/weights/best.pt \
+		--project ./detection_names_and_prices/runs/detect \
+		--name $(TRIAL_NAME)_names_and_prices${EXP_NAME} \
         --conf 0.25 \
         --device cpu
 
@@ -76,5 +78,7 @@ detect-pricetags:
 	python ./yolov5/detect.py \
         --source ./detection_pricetags/manual_test_images \
         --weights ./detection_pricetags/runs/train/$(TRIAL_NAME)_pricetags${EXP_NAME}/weights/best.pt \
+		--project ./detection_pricetags/runs/detect \
+		--name $(TRIAL_NAME)_pricetags${EXP_NAME} \
         --conf 0.25 \
         --device cpu
