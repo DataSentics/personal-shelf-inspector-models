@@ -18,6 +18,7 @@ wandb
 
 # Data version control ----------------------------
 dvc
+dvc[azure]
 
 # Plotting ------------------------------------
 pandas>=1.1.4

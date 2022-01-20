@@ -1,0 +1,3 @@
+['remote "ps_azure"']
+    account_name = <your account name>
+    account_key = <your account key>
