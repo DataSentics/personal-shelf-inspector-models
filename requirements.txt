@@ -27,3 +27,5 @@ tqdm>=4.41.0
 # extras --------------------------------------
 # thop  # FLOPS computation
 # seaborn  # plotting
+
+dvc[azure]
