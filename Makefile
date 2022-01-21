@@ -11,7 +11,12 @@ TRIAL_NAME := yolo_640_nano
 # - before training a new model, choose any name of the model. 
 # - To use a given trained model for inference or to convert the model, specify the model's trial name here.
 
-EXP_NAME := 1
+# best names-and-prices model
+# EXP_NAME := 2
+
+# best pricetags model
+EXP_NAME := 5
+
 # After training the model, the results are saved to $(FOLDER)/runs/train/$(TRIAL_NAME)_{names_and_prices, pricetags}$EXP_NAME. 
 # The exp_name is generated automatically, and starts with "" and continues with increasing numbers 
 # To use a given trained model for inference or to convert the model, specify the model's exp name here.
@@ -21,7 +26,7 @@ CONDA_ENV_NAME := psi-yolo
 setup-dev-env:
 	conda env create -f environment.yml ; \
 	git clone https://github.com/ultralytics/yolov5 ; \
-	($(CONDA_ACTIVATE) $(CONDA_ENV_NAME) ; pip install -r requirements.txt ; cd yolov5 ; bash ./data/scripts/download_weights.sh)
+	($(CONDA_ACTIVATE) $(CONDA_ENV_NAME) ; pip install -r requirements.txt ; dvc pull ; cd yolov5 ; bash ./data/scripts/download_weights.sh) ; 
 
 # ==================================================================
 # PREPARE TRAINING DATA 
