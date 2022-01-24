@@ -1,6 +1,7 @@
 SHELL=/bin/bash
 CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 
+.PHONY: setup-dev-env download-data prepare-data-pricetags train-names-and-prices train-pricetags detect-names-and-prices detect-pricetags export-names-and-prices export-pricetags run-example-tfjs-webapp
 
 # ==================================================================
 # TRIAL NAME SETTINGS
@@ -41,10 +42,10 @@ CONDA_ENV_NAME := psi-yolo
 # 	- We don't install these dependencies with pip, because pip cannot ensure the binary compatibility of pytorch and tensorflow with cuda.
 #
 # The rest of the dependencies (mainly standard python packages) are installed with pip in the conda environment.
-# 
-# Then we pull the datasets, trained models and experiment runs artifacts from dataversion control (dvc) remote (Azure Blob Storage).
 #
-# Finally we download the latest YOLOv5 library along with pretrained network weights.
+# Then we download the latest YOLOv5 library along with pretrained network weights.
+#
+# And finally we download the data for the training and inference from data version control remote (dvc pull)
 #
 # After the successful environment setup, activate the conda environment (conda activate psi-yolo) and you should be able to run all the other Makefile targets.
 setup-dev-env:
@@ -53,15 +54,25 @@ setup-dev-env:
 		mamba env create -f environment.yml ; \
 		conda activate $(CONDA_ENV_NAME) ; \
 		pip install -r requirements.txt ; \
-		dvc pull ; \
 		git clone https://github.com/ultralytics/yolov5 ; \
 		cd yolov5 ; \
 		bash ./data/scripts/download_weights.sh \
+	)
+	@echo -e "\n\n\nSetup environment completed. Pulling data from DVC remote...\n"
+	($(CONDA_ACTIVATE) $(CONDA_ENV_NAME) ; \
+		dvc pull \
 	)
 
 # ==================================================================
 # PREPARE TRAINING DATA 
 # ==================================================================
+
+# Pull the datasets, trained models and experiment runs artifacts from dataversion control (dvc) remote (Azure Blob Storage).
+# Make sure you have valid credentials for the remote (Azure Blob Storage) in the .dvc/config.local file.
+# If not, checkout the .dvc/config.local.example template, fill in your credentials and rename it to .dvc/config.local
+download-data:
+	dvc pull
+
 prepare-data-names-and-prices:
 #   the multiple .json annotation files don't adhere to the same format, so they've already been manually merged and unified into all_annotations.json
 #   -> so there is no need to merge JSONs with merge_jsons.py
