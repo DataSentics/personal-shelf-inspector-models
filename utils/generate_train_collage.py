@@ -7,6 +7,37 @@ import tqdm
 
 
 class AffineTransform:
+    """
+    Class computing the affine transformation function, which is used to transform the bounding box coordinates
+        of one pricetag image to the coordinates in the collage grid.
+
+
+    Parameters
+    ----------
+    w, h : int
+        width and height of the pricetag image
+    
+    grid_dim_x, grid_dim_y : int
+        number of columns and rows in the collage grid
+
+    target_size : int
+        size of the collage (square) image (width and height)
+
+    row, col : int
+        row and column of the pricetag in the collage grid
+
+    Methods
+    -------
+    forward(x, y, w, h) : tuple
+        given pricetag bounding box, compute the tranformed bounding box coordinates after placing it in the collage grid
+
+    inverse(x, y, w, h) : tuple
+        given collage grid bounding box, compute the bounding box coordinates with respect to the original pricetag image
+
+    """
+
+
+
     def __init__(self, w, h, grid_dim_x, grid_dim_y, target_size, row, col):
         cell_width = target_size / grid_dim_x
         cell_height = target_size / grid_dim_y
@@ -40,6 +71,28 @@ class AffineTransform:
         return (x - self.x_offset) / self.scale_factor, (y - self.y_offset) / self.scale_factor, w / self.scale_factor, h / self.scale_factor
 
 class Collage:
+    """
+    Builds a collage from a list of pricetag images, which are placed in a collage grid.
+
+
+    Parameters
+    ----------
+    grid_dim_x, grid_dim_y : int
+        number of columns and rows of the collage being created
+
+    target_size : int
+        size of the collage image (width and height)
+
+    Methods
+    -------
+    add_image(img, row, col, annotations=[]) : None
+        place a pricetag image in the collage grid at the specified row and column
+        annotations is a list of bounding box annotations for the pricetag image
+
+
+    save(out_img_dir, out_label_dir, file_prefix) : None
+        save the created collage and the corresponding annotation file to the specified location in the YOLOv5 format
+    """
     def __init__(self, grid_dim_x, grid_dim_y, target_size):
         self.target_size = target_size
         self.collage_img = Image.new('RGB', (target_size, target_size))
@@ -73,6 +126,36 @@ class Collage:
 
 
 class TransformedImage:
+    """
+    Container class for the pricetag image, its bounding box annotations 
+    and the affine transformation function, which is used to place the pricetag image in the collage grid.
+
+    Parameters
+    ----------
+    img : PIL.Image
+        pricetag image
+
+    grid_dim_x, grid_dim_y : int
+        number of columns and rows of the collage being created
+
+    target_size : int
+        size of the collage image (width and height)
+
+    row, col : int
+        row and column of the pricetag in the collage grid
+
+    annotations : list
+        list of bounding box annotations for the pricetag image
+
+
+    Methods
+    -------
+    draw_on_collage(collage_img: PIL.Image) : None
+        draws itself on the collage image
+
+    map_annotations() : list
+        maps the bounding box annotations of the pricetag image to the collage grid coordinates
+    """
     def __init__(self, img, grid_dim_x, grid_dim_y, target_size, row, col, annotations = []):
         self.orig_img = img
         self._annotations = annotations
@@ -101,6 +184,26 @@ class TransformedImage:
 
 
 def create_collage_img(src_data, grid_dim_x, grid_dim_y, target_size):
+    """
+    Creates a collage image from a list of pricetag images.
+
+    Parameters
+    ----------
+    src_data : list
+        list of grid_dim_x * grid_dim_y pricetag images
+
+    grid_dim_x, grid_dim_y : int
+        number of columns and rows of the collage being created
+
+    target_size : int
+        width and height of the collage image
+
+
+    Returns
+    -------
+    collage_img : Collage
+        Collage instance containing the created collage image and the corresponding annotations 
+    """
     
     collage = Collage(grid_dim_x, grid_dim_y, target_size)
 
@@ -166,6 +269,30 @@ def create_collage_img(src_data, grid_dim_x, grid_dim_y, target_size):
 
 
 def convert_dataset(src_img_dir, src_label_dir, out_img_dir, out_label_dir, grid_dim_x, grid_dim_y, target_size, n_iterations):
+    """
+    Converts a dataset of pricetag images and their bounding box annotations to the new dataset of collage images with their corresponding annotations.
+
+    Parameters
+    ----------
+    src_img_dir : str
+        path to the directory containing the pricetag images
+
+    src_label_dir : str
+        path to the directory containing the pricetag bounding box annotations
+
+    out_img_dir : str
+        path to the directory where the collage images will be saved
+
+    out_label_dir : str
+        path to the directory where the collage bounding box annotations will be saved
+
+    grid_dim_x, grid_dim_y : int
+        number of columns and rows of the collages being created
+
+    target_size : int
+        widht and height of the collage images
+    """
+
     # get all the image and label files
     src_img_files = sorted([f for f in os.listdir(src_img_dir) if f.endswith(".jpg")])
     src_label_files = sorted([f for f in os.listdir(src_label_dir) if f.endswith(".txt")])
@@ -196,7 +323,17 @@ def convert_dataset(src_img_dir, src_label_dir, out_img_dir, out_label_dir, grid
         collage.save(out_img_dir, out_label_dir, file_prefix = f"collage_{i}")
 
 def detect_dataset(src_img_dir, out_img_dir, weights, grid_dim_x, grid_dim_y, target_size):
-    # TODO
+    """
+    Convert back the dataset of collage images to the original pricetag images and their bounding box annotations.
+    In a sense, does the opposite of convert_dataset - does the inverse mapping of the bounding boxes in the collage image to the original pricetag image.
+
+    This reverse mapping must be done in the phone during the inference (as well as the collage creation), so the initial motivation was to write a python script as a template for the javascript running on the phone.
+    But in the end I didn't have the time to implement it.
+
+    IMPORTANT: This is work in progress and isn't working yet.
+    If anything seem wierd or wrong, just ignore it (it's not important).
+     
+    """
 
     # load the YOLOv5s model
     device = select_device(opt.device)
@@ -242,7 +379,8 @@ if __name__ == "__main__":
     parser.add_argument("--grid_y", type=int, required=True, help="Number of grid rows.")
     parser.add_argument("--n_iterations", type=int, default=1, help="Number of random passes over the dataset.")
 
-    parser.add_argument("--detect", action="store_true", help="Detect the dataset and create the output with cut-out images.")
+    # Work in progress, the detection and the reverse mapping are not working yet.
+    parser.add_argument("--detect", action="store_true", help="Detect the dataset and create the output with cut-out images."a)
     parser.add_argument("--weights", type=str, default="./temp/best.pt", help="Only used if --detect is set. Path to the model to use for detection.")
 
 
@@ -256,6 +394,7 @@ if __name__ == "__main__":
     os.makedirs(args.output_path)
 
     if args.detect:
+        # Work in progress, not working yet
         print("Running inference...")
         # detect the dataset
         detect_dataset(args.dataset_path, args.output_path, args.weights, args.grid_x, args.grid_y, args.target_size)
