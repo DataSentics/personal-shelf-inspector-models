@@ -1,0 +1,12 @@
+name: psi-yolo
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python==3.8
+  - pip
+  - pytorch::pytorch>=1.10.1
+  - pytorch::torchvision
+  - cudatoolkit=11.3.1
+  - cudnn=8.2.1
+  - tensorflow=2.6.0
