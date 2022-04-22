@@ -11,7 +11,6 @@ $ cd psi-torch-models
 2. Add [DVC](https://dvc.org/) Azure Blob storage credentials to `.dvc/config.local`. There is a template `.dvc/config.local.example` for inspiration.
 The DVC remote contains the datasets, trained models and training runs artifacts, which are too big to store in github repo.
 
-
 ```
 file: .dvc/config.local.example
 ---
@@ -20,6 +19,25 @@ file: .dvc/config.local.example
     account_name = <your account name>
     account_key = <your account key>
 ```
+
+You can find the storage account name and keys with azure cli: 
+
+```
+# list all available subscriptions
+az account list --output table
+
+# switch to desired subscription
+az account set --subscription internal-gold-dev
+
+# list all account names with "tkml" in the name
+az storage account list --output table | grep tkml
+# -> so the account name is tkml9458801219
+
+# list all account keys belonging to this account name
+az storage account keys list --account-name tkml9458801219 
+```
+
+Or in Azure Storage Explorer: internal-gold-dev -> Storage accounts -> right click tkml9458801219 and select "copy primary key". 
 
 3. Setup the conda development environment. Make sure conda is installed on your system. 
 
