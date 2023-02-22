@@ -20,10 +20,10 @@ TRIAL_NAME := yolo_640_nano
 # Make sure to specify the correct $EXP_NUMBER when running the inference or when exporting to TF.js.
 
 # best names-and-prices model
-# EXP_NUMBER := 2
+EXP_NUMBER_NAMES_PRICES := 2
 
 # best pricetags model
-EXP_NUMBER := 5
+EXP_NUMBER_PRICETAGS := 5
 
 
 CONDA_ENV_NAME := psi-yolo
@@ -54,7 +54,7 @@ setup-dev-env:
 		mamba env create -f environment.yml ; \
 		conda activate $(CONDA_ENV_NAME) ; \
 		pip install -r requirements.txt ; \
-		git clone https://github.com/ultralytics/yolov5 ; \
+		git clone --depth 1 --branch v7.0 https://github.com/ultralytics/yolov5 ; \
 		cd yolov5 ; \
 		bash ./data/scripts/download_weights.sh \
 	)
@@ -127,9 +127,9 @@ train-pricetags:
 detect-names-and-prices:
 	python ./yolov5/detect.py \
         --source ./detection_names_and_prices/manual_test_images \
-        --weights ./detection_names_and_prices/runs/train/$(TRIAL_NAME)_names_and_prices${EXP_NUMBER}/weights/best.pt \
+        --weights ./detection_names_and_prices/runs/train/$(TRIAL_NAME)_names_and_prices${EXP_NUMBER_NAMES_PRICES}/weights/best.pt \
 		--project ./detection_names_and_prices/runs/detect \
-		--name $(TRIAL_NAME)_names_and_prices${EXP_NUMBER} \
+		--name $(TRIAL_NAME)_names_and_prices${EXP_NUMBER_NAMES_PRICES} \
         --conf 0.25 \
         --device cpu
 
@@ -137,9 +137,9 @@ detect-names-and-prices:
 detect-pricetags:
 	python ./yolov5/detect.py \
         --source ./detection_pricetags/manual_test_images \
-        --weights ./detection_pricetags/runs/train/$(TRIAL_NAME)_pricetags${EXP_NUMBER}/weights/best.pt \
+        --weights ./detection_pricetags/runs/train/$(TRIAL_NAME)_pricetags${EXP_NUMBER_PRICETAGS}/weights/best.pt \
 		--project ./detection_pricetags/runs/detect \
-		--name $(TRIAL_NAME)_pricetags${EXP_NUMBER} \
+		--name $(TRIAL_NAME)_pricetags${EXP_NUMBER_PRICETAGS} \
         --conf 0.25 \
 		--device cpu
 
@@ -149,14 +149,14 @@ detect-pricetags:
 export-names-and-prices:
 	export CUDA_VISIBLE_DEVICES='' ; \
 	python ./yolov5/export.py \
-		--weights ./detection_names_and_prices/runs/train/$(TRIAL_NAME)_names_and_prices${EXP_NUMBER}/weights/best.pt \
-		--include tfjs
+		--weights ./detection_names_and_prices/runs/train/$(TRIAL_NAME)_names_and_prices${EXP_NUMBER_NAMES_PRICES}/weights/best.pt \
+		--include tfjs saved_model
 
 export-pricetags:
 	export CUDA_VISIBLE_DEVICES='' ; \
 	python ./yolov5/export.py \
-		--weights ./detection_pricetags/runs/train/$(TRIAL_NAME)_pricetags${EXP_NUMBER}/weights/best.pt \
-		--include tfjs
+		--weights ./detection_pricetags/runs/train/$(TRIAL_NAME)_pricetags${EXP_NUMBER_PRICETAGS}/weights/best.pt \
+		--include tfjs saved_model
 
 
 # Run demo React web app that uses the exported model (to check that the TF.js export worked)
@@ -165,6 +165,6 @@ run-example-tfjs-webapp:
 	git clone https://github.com/zldrobit/tfjs-yolov5-example.git ; \
 	cd tfjs-yolov5-example \
 		&& npm install \
-		&& ln -f -s ../../detection_names_and_prices/runs/train/$(TRIAL_NAME)_names_and_prices${EXP_NUMBER}/weights/best_web_model public/web_model \
+		&& ln -f -s ../../detection_names_and_prices/runs/train/$(TRIAL_NAME)_names_and_prices${EXP_NUMBER_NAMES_PRICES}/weights/best_web_model public/web_model \
 		&& npm start
 

@@ -150,3 +150,10 @@ __pycache__/
 wandb/
 *variables.data*
 *variables.index
+
+# Data
+detections/
+prices_names_raw_photos_annotations/
+
+# Yolov5
+yolov5/
