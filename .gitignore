@@ -152,7 +152,8 @@ wandb/
 *variables.index
 
 # Data
-detections_names_and_prices/data/*
+detection_names_and_prices/data/*
+detection_pricetags/data/*
 detections/
 
 # Yolov5
