@@ -1,4 +1,0 @@
-[core]
-    remote = ps_azure
-['remote "ps_azure"']
-    url = azure://personal-shelf-inspector/dvc

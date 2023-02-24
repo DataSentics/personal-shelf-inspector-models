@@ -1,80 +1,61 @@
-# Personal Shelf Inspector Training
+# Personal Shelf Inspector Models
 
-### Setup
-1. Clone repo, change working directory to root of the repo
+### Development environment setup
+1. Clone the repository, change working directory to the root of the repository
 
-```
-$ git clone git@github.com:DataSentics/psi-torch-models.git
-$ cd psi-torch-models
-```
+    ```
+    git clone git@github.com:DataSentics/psi-torch-models.git
+    cd psi-torch-models
+    ```
 
-2. Add [DVC](https://dvc.org/) Azure Blob storage credentials to `.dvc/config.local`. There is a template `.dvc/config.local.example` for inspiration.
-The DVC remote contains the datasets, trained models and training runs artifacts, which are too big to store in github repo.
+2. Download the training data from the DataSentics sharepoint [here](https://datasentics.sharepoint.com/:u:/s/EXTPersonalShelfInspectorData/ESqfkSgeM_FGr_VZo1UzasgBuu3SDWhXU9MwYI3fcGtcoQ?e=RnZmFT) and unpack
+the entire content in the root directory of the repository. You should end up with two new directories `detection_pricetags` and `detection_names_and_prices` in the root of the repository each of which should contain the `raw` subdirectory with image files and an annotation file `annotations.json`. Also, the `detection_pricetags` directory should contain a `settings.yaml` file which contains some basic specifications for model training with yolov5.
 
-```
-file: .dvc/config.local.example
----
 
-['remote "ps_azure"']
-    account_name = <your account name>
-    account_key = <your account key>
-```
+3. Setup the development environment by the following Makefile command
 
-You can find the storage account name and keys with azure cli: 
+    ```
+    make venv
+    ```
 
-```
-# list all available subscriptions
-az account list --output table
+    This will do a couple of things:
+        1. A python virtual environment is set up and dependencies needed for `yolov5 v7.0` are installed
+        along with optional dependencies which are needed for TF.js model export.
+        2. Yolov5 is cloned and copied into the root directory (but only the tag `v7.0` is cloned)
+        2. Pretrained model weights for all yolov5 models are downloaded using the `download_weights.sh` script
+        provided in the yolov5 repository.
 
-# switch to desired subscription
-az account set --subscription internal-gold-dev
 
-# list all account names with "tkml" in the name
-az storage account list --output table | grep tkml
-# -> so the account name is tkml9458801219
-
-# list all account keys belonging to this account name
-az storage account keys list --account-name tkml9458801219 
-```
-
-Or in Azure Storage Explorer: internal-gold-dev -> Storage accounts -> right click tkml9458801219 and select "copy primary key". 
-
-3. Setup the conda development environment. Make sure conda is installed on your system. 
-
-```
-$ make setup-dev-env
-$ conda activate psi-yolo
-```
-
-### Training
-1. Prepare the data (optional)
+### Data preparation
 
 The Makefile contains targets for data preparation (`prepare-data-names-and-prices`, `prepare-data-pricetags`), which prepare the datasets for training.
 
-But the prepared versions of thoses datasets are already stored in DVC remote, so run `make prepare-data-{names-and-prices, pricetags}` only if you make any changes to the source datasets.
+This will:
 
-2. Run the training
+1. split the data into training and validation sets
+2. convert the VIA annotations to the annotations format used by yolov5
+3. In case of `prepare-data-names-and-prices` it also generates collages of pricetags (see [Collaging]() for more details on this)
+
+### Model training
+You can run the training of each model by the following commands. 
 
 ```
-$ make train-names-and-prices
-$ make train-pricetags
+make train-names-and-prices
+make train-pricetags
 ```
 
 More detailed description of the training procedure and training hyperparameters is described in the Makefile.
 
-The training script will also automatically guide you to optionally setup [Weights and Biases](https://wandb.ai/) to monitor and analze ongoing training.
-
-
-### Inference
+### Testing inference
 To test your trained models on some photos:
 1. Specify the `TRIAL_NAME` and `EXP_NUMBER` of your run in the Makefile (again, for more details checkout the Makefile)
 2. Put some test images into `./{detection_names_and_prices, detection_pricetags}/manual_test_images` folder
 3. Run the inference
 
-```
-$ make detect-names-and-prices
-$ make detect-pricetags
-```
+    ```
+    make detect-names-and-prices
+    make detect-pricetags
+    ```
 
 The results are saved to `./{detection_names_and_prices, detection_pricetags}/runs/detect` folder.
 
@@ -82,18 +63,18 @@ The results are saved to `./{detection_names_and_prices, detection_pricetags}/ru
 1. Specify the `TRIAL_NAME` and `EXP_NUMBER` of the trained model (as in inference) in the Makefile
 2. Run the export
 
-```
-$ make export-names-and-prices
-$ make export-pricetags
-```
+    ```
+    make export-names-and-prices
+    make export-pricetags
+    ```
 
-The TensorFlow.js model is exported to `./{detection_names_and_prices, detection_pricetags}/runs/train/${TRIAL_NAME}_{names_and_prices, pricetags}${EXP_NUMBER}/weights/best_web_model` directory.
-For example: `detection_pricetags/runs/train/yolo_640_nano_pricetags5/weights/best_web_model`
+    The TensorFlow.js model is exported to `./{detection_names_and_prices, detection_pricetags}/runs/train/${TRIAL_NAME}_{names_and_prices, pricetags}${EXP_NUMBER}/weights/best_web_model` directory.
+    For example: `detection_pricetags/runs/train/yolo_640_nano_pricetags5/weights/best_web_model`
 
 ### Run demo React web app
 You can test the exported TF.js models in a locally-running demo React web application.
 
 ```
-$ make run-example-tfjs-webapp
+make run-example-tfjs-webapp
 ```
 

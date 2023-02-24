@@ -1,6 +1,0 @@
-# These parts of .dvc folder should be ignored by git: 
-# Add more if dvc generates more files, current specification is not likely to be exhaustive 
-/config.local
-/tmp
-/cache
-/plots

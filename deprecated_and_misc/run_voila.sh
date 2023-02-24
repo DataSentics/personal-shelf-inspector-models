@@ -1,1 +1,0 @@
-voila ctenar_cenovky_demo_yolov5.ipynb --ExecutePreprocessor.timeout=180 --debug

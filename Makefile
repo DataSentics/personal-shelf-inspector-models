@@ -1,7 +1,13 @@
 SHELL=/bin/bash
 CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 
-.PHONY: setup-dev-env download-data prepare-data-pricetags train-names-and-prices train-pricetags detect-names-and-prices detect-pricetags export-names-and-prices export-pricetags run-example-tfjs-webapp
+.PHONY: help venv prepare-data-pricetags prepare-data-pricetags prepare-data-names-and-prices train-pricetags detect-names-and-prices detect-pricetags export-names-and-prices export-pricetags run-example-tfjs-webapp
+
+# HELP
+# This will output the help for each task
+# thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+help: ## This help.
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-z%A-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # ==================================================================
 # TRIAL NAME SETTINGS
@@ -33,95 +39,72 @@ CONDA_ENV_NAME := psi-yolo
 # ENVIRONMENT SETUP
 # ==================================================================
 
-# First make sure you have conda installed.
-#
-# We first install mamba into the conda base environment.
-# 	- mamba is just a wrapper around conda with better and faster dependency resolution
-#
-# Then we create a conda environment from the environment.yml file, which specifies compatible pytorch, tensorflow, python, cudnn, and cudatoolkit versions.
-# 	- We don't install these dependencies with pip, because pip cannot ensure the binary compatibility of pytorch and tensorflow with cuda.
-#
-# The rest of the dependencies (mainly standard python packages) are installed with pip in the conda environment.
-#
-# Then we download the latest YOLOv5 library along with pretrained network weights.
-#
-# And finally we download the data for the training and inference from data version control remote (dvc pull)
-#
-# After the successful environment setup, activate the conda environment (conda activate psi-yolo) and you should be able to run all the other Makefile targets.
-setup-dev-env:
-	($(CONDA_ACTIVATE) base ; \
-		conda install mamba -n base -c conda-forge ; \
-		mamba env create -f environment.yml ; \
-		conda activate $(CONDA_ENV_NAME) ; \
-		pip install -r requirements.txt ; \
-		git clone --depth 1 --branch v7.0 https://github.com/ultralytics/yolov5 ; \
-		cd yolov5 ; \
-		bash ./data/scripts/download_weights.sh \
-	)
-	@echo -e "\n\n\nSetup environment completed. Pulling data from DVC remote...\n"
-	($(CONDA_ACTIVATE) $(CONDA_ENV_NAME) ; \
-		dvc pull \
-	)
+venv: ## set up a simple python virtual env, clone yolov5 version 7.0 and get model weights
+	python3 -m venv .venv \
+	&& source .venv/bin/activate \
+	&& python3 -m pip install --upgrade pip \
+	&& python3 -m pip install -r requirements.txt \
+  	&& git clone --depth 1 --branch v7.0 https://github.com/ultralytics/yolov5 \
+ 	&& cd yolov5 \
+  	&& bash ./data/scripts/download_weights.sh
+
 
 # ==================================================================
 # PREPARE TRAINING DATA 
 # ==================================================================
 
-# Pull the datasets, trained models and experiment runs artifacts from dataversion control (dvc) remote (Azure Blob Storage).
-# Make sure you have valid credentials for the remote (Azure Blob Storage) in the .dvc/config.local file.
-# If not, checkout the .dvc/config.local.example template, fill in your credentials and rename it to .dvc/config.local
-download-data:
-	dvc pull
+prepare-data-pricetags:
+
+	python ./utils/via_to_yolo.py --input_path detection_pricetags/data/raw/ --output_path detection_pricetags/data/train_test/ --annotations "annotations.json" --train_val_split_ratio 0.2
 
 prepare-data-names-and-prices:
-#   the multiple .json annotation files don't adhere to the same format, so they've already been manually merged and unified into all_annotations.json
-#   -> so there is no need to merge JSONs with merge_jsons.py
-# 
-#   via_to_yolo.py converts the VIA json annotations to the YOLO format and produces train_test split
+
+#   Photos and VIA (https://www.robots.ox.ac.uk/~vgg/software/via/via.html) generated annotations for training are stored in the detection_names_and_prices/data/raw/ directory
+#   via_to_yolo.py converts the VIA json annotations to the YOLO format and produces a train-test split.
 #   generate_train_collage.py generates pricetag collages and saves them into train_test_collage folder. This is used for training.
 #
-# 	python ./utils/merge_jsons.py merge_annotations --path $(FOLDER)/data/raw
-	python ./utils/via_to_yolo.py --input_path detection_names_and_prices/data/raw/ --output_path detection_names_and_prices/data/train_test/ --annotations "all_annotations.json" --train_val_split_ratio 0.2
+	python ./utils/via_to_yolo.py --input_path detection_names_and_prices/data/raw/ --output_path detection_names_and_prices/data/train_test/ --annotations "annotations.json" --train_val_split_ratio 0.2
 	python ./utils/generate_train_collage.py --dataset_path detection_names_and_prices/data/train_test --output_path detection_names_and_prices/data/train_test_collage --target_size 640 --grid_x 3 --grid_y 7 --n_iterations 50
-
-prepare-data-pricetags:
-	@echo -e "prepare-data-pricetags:\nthe original pricetag training dataset was lost and only the train_test split was available - so we don't need to convert the VIA json annotations to the YOLO format"
-	@echo "  -> the already-prepared YOLO pricetag dataset is just pulled from the DVC repo"
 
 # ==================================================================
 # TRAINING
 # ==================================================================
 
-# Runs training. You can alter some training parameters here - YOLOv5 size (nano, small, medium..), image size, batch size, number of epochs, etc.
-# the remaining hyperparameters are specified in detection_names_and_prices/models/hyp.finetune.collage.640.yaml file
+# You can alter some training parameters here - YOLOv5 size (nano, small, medium..), image size, batch size, number of epochs, etc.
+# the remaining hyperparameters are specified in <detection_pricetags/models/hyp.finetune.pricetags.640.yaml> for the pricetag detection model
+# and in <detection_names_and_prices/models/hyp.finetune.collage.640.yaml> for the names and prices detection model
+
+
+train-pricetags: ## runs the training script for the model which detects pricetags in images of shelves
+	python ./yolov5/train.py \
+        --img 640 \
+        --batch 48 \
+        --epochs 300 \
+        --data detection_pricetags/settings.yaml \
+        --weights ./yolov5/weights/yolov5n.pt \
+        --project detection_pricetags/runs/train \
+        --name $(TRIAL_NAME)_pricetags \
+        --hyp detection_pricetags/models/hyp.finetune.pricetags.640.yaml
+
+# Runs training.  file
 # You may pass more training parameters, see ./yolov5/train.py for the exhaustive list. 
-train-names-and-prices:
+train-names-and-prices: ## runs the training script for the model which detects names and prices in images of pricetags
 	python ./yolov5/train.py \
         --img 640 \
         --batch 48 \
         --epochs 300 \
         --data detection_names_and_prices/data/train_test_collage/settings.yaml \
-        --weights ./yolov5/yolov5n.pt \
+        --weights ./yolov5/weights/yolov5n.pt \
         --project detection_names_and_prices/runs/train \
         --name $(TRIAL_NAME)_names_and_prices \
         --hyp detection_names_and_prices/models/hyp.finetune.collage.640.yaml
 
-# pricetags are trained with different hyperparameters
-# -> see detection_pricetags/models/hyp.finetune.pricetags.640.yaml
-train-pricetags:
-	python ./yolov5/train.py \
-        --img 640 \
-        --batch 48 \
-        --epochs 300 \
-        --data detection_pricetags/data/settings.yaml \
-        --weights ./yolov5/yolov5n.pt \
-        --project detection_pricetags/runs/train \
-        --name $(TRIAL_NAME)_pricetags \
-        --hyp detection_pricetags/models/hyp.finetune.pricetags.640.yaml
 
 # ==================================================================
-# INFERENCE
+# INFERENCE/TESTING
 # ==================================================================
+# This is mostly for development and testing purposes
+
 
 # Detection using trained model on manual_test_images.
 detect-names-and-prices:
@@ -143,7 +126,9 @@ detect-pricetags:
         --conf 0.25 \
 		--device cpu
 
-
+# ==================================================================
+# EXPORT TO BINARY
+# ==================================================================
 # Export the model on CPU (GPU export can crash when not enough GPU memory is available)
 # to hide the GPU from tensorflow -> export CUDA_VISIBLE_DEVICES=''
 export-names-and-prices:
