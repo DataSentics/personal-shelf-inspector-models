@@ -8,7 +8,7 @@
     cd psi-torch-models
     ```
 
-2. Download the training data from the DataSentics sharepoint [here](datasentics.com) and unpack
+2. Download the training data from the DataSentics sharepoint [here](https://datasentics.sharepoint.com/:u:/s/EXTPersonalShelfInspectorData/ESqfkSgeM_FGr_VZo1UzasgBuu3SDWhXU9MwYI3fcGtcoQ?e=RnZmFT) and unpack
 the entire content in the root directory of the repository. You should end up with two new directories `detection_pricetags` and `detection_names_and_prices` in the root of the repository each of which should contain the `raw` subdirectory with image files and an annotation file `annotations.json`. Also, the `detection_pricetags` directory should contain a `settings.yaml` file which contains some basic specifications for model training with yolov5.
 
 
