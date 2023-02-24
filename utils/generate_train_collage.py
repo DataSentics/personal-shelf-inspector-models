@@ -380,7 +380,7 @@ if __name__ == "__main__":
     parser.add_argument("--n_iterations", type=int, default=1, help="Number of random passes over the dataset.")
 
     # Work in progress, the detection and the reverse mapping are not working yet.
-    parser.add_argument("--detect", action="store_true", help="Detect the dataset and create the output with cut-out images."a)
+    parser.add_argument("--detect", action="store_true", help="Detect the dataset and create the output with cut-out images.")
     parser.add_argument("--weights", type=str, default="./temp/best.pt", help="Only used if --detect is set. Path to the model to use for detection.")
 
 
