@@ -80,7 +80,7 @@ train-pricetags: ## runs the training script for the model which detects priceta
         --img 640 \
         --batch 48 \
         --epochs 300 \
-        --data detection_pricetags/data/settings.yaml \
+        --data detection_pricetags/settings.yaml \
         --weights ./yolov5/weights/yolov5n.pt \
         --project detection_pricetags/runs/train \
         --name $(TRIAL_NAME)_pricetags \
