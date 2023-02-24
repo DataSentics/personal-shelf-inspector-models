@@ -26,9 +26,6 @@ the entire content in the root directory of the repository. You should end up wi
         provided in the yolov5 repository.
 
 
-
-
-
 ### Data preparation
 
 The Makefile contains targets for data preparation (`prepare-data-names-and-prices`, `prepare-data-pricetags`), which prepare the datasets for training.
@@ -55,10 +52,10 @@ To test your trained models on some photos:
 2. Put some test images into `./{detection_names_and_prices, detection_pricetags}/manual_test_images` folder
 3. Run the inference
 
-```
-make detect-names-and-prices
-make detect-pricetags
-```
+    ```
+    make detect-names-and-prices
+    make detect-pricetags
+    ```
 
 The results are saved to `./{detection_names_and_prices, detection_pricetags}/runs/detect` folder.
 
@@ -66,13 +63,13 @@ The results are saved to `./{detection_names_and_prices, detection_pricetags}/ru
 1. Specify the `TRIAL_NAME` and `EXP_NUMBER` of the trained model (as in inference) in the Makefile
 2. Run the export
 
-```
-make export-names-and-prices
-make export-pricetags
-```
+    ```
+    make export-names-and-prices
+    make export-pricetags
+    ```
 
-The TensorFlow.js model is exported to `./{detection_names_and_prices, detection_pricetags}/runs/train/${TRIAL_NAME}_{names_and_prices, pricetags}${EXP_NUMBER}/weights/best_web_model` directory.
-For example: `detection_pricetags/runs/train/yolo_640_nano_pricetags5/weights/best_web_model`
+    The TensorFlow.js model is exported to `./{detection_names_and_prices, detection_pricetags}/runs/train/${TRIAL_NAME}_{names_and_prices, pricetags}${EXP_NUMBER}/weights/best_web_model` directory.
+    For example: `detection_pricetags/runs/train/yolo_640_nano_pricetags5/weights/best_web_model`
 
 ### Run demo React web app
 You can test the exported TF.js models in a locally-running demo React web application.
